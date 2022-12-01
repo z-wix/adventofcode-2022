@@ -1,4 +1,4 @@
-# Advent of Code 2021
+# Advent of Code 2022
 
 ![santa-sled-loop_dribble](https://cdn.dribbble.com/users/6033/screenshots/1400216/santa.gif)
 
