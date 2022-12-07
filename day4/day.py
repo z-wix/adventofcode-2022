@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load in input data assign colum names
-df = pd.read_csv('test_input.txt', header = None, names = ['elf1', 'elf2'])
+df = pd.read_csv('input.txt', header = None, names = ['elf1', 'elf2'])
 
 # Create Convert to Range Function
 def convert_to_range(df, column):
@@ -21,15 +21,18 @@ for col in df:
 
 # Find which ones are overlapping
 def find_overlaps(list1, list2):
-    set1 = set(list1)
-    set2 = set(list2)
-    if set1.intersection(set2):
+
+    check1 = all(item in list1 for item in list2)
+    check2 = all(item in list2 for item in list1)
+
+    if check1 is True:
+        return 1
+    elif check2 is True:
         return 1
     else:
         return 0
 
-counter = 0
-
+# Function to combine the overlaps together
 def add_overlaps(df, col1, col2):
     overlaps = []
 
@@ -38,4 +41,10 @@ def add_overlaps(df, col1, col2):
 
     return overlaps
 
+# Create new overlaps column
 df['overlaps'] = add_overlaps(df, 'elf1_range', 'elf2_range')
+
+# get overall sum of overlaps
+overall_sum = df['overlaps'].sum()
+
+print(f'All assignment paris that have one that fully contains the other: {overall_sum}')
