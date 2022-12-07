@@ -1,37 +1,41 @@
 import pandas as pd
 
-# Import text file and iterate over gaps
+# Load in input data assign colum names
+df = pd.read_csv('test_input.txt', header = None, names = ['elf1', 'elf2'])
+
+# Create Convert to Range Function
+def convert_to_range(df, column):
+    result = []
+    for i in df[column]:
+        range_group = []
+        a, b = i.split('-')
+        a, b = int(a), int(b)
+        range_group.extend(range(a, b + 1))
+        result.append(range_group)
+    return result
+
+# Apply new Function and add columns
+for col in df:
+    col_name = f'{col}_range'
+    df[col_name] = convert_to_range(df, col)
+
+# Find which ones are overlapping
+def find_overlaps(list1, list2):
+    set1 = set(list1)
+    set2 = set(list2)
+    if set1.intersection(set2):
+        return 1
+    else:
+        return 0
+
 counter = 0
-input = dict()
-with open('input.txt') as f:
-    for group in f.read().split('\n\n'):
-        counter += 1
-        key = 'elf' + str(counter)
-        val = group.split('\n')
-        input[key] = ' '.join(val)
 
-# Convert to Dataframe and Rename Calorie Column
-elves = pd.DataFrame.from_dict(input, orient = 'index', columns = ['cal_list'])
+def add_overlaps(df, col1, col2):
+    overlaps = []
 
-# Convert String of Numbers into List of Integers and Sum it up
-total_cals = []
-for num_str in elves['cal_list']:
-    num_list = []
-    for number in num_str.split():
-        num_int = int(number)
-        num_list.append(num_int)
-    num_sum = sum(num_list)
-    total_cals.append(num_sum)
+    for i in df.index:
+        overlaps.append(find_overlaps(df[col1][i], df[col2][i]))
 
-# Add total calories to df
-elves['total_cals'] = total_cals
+    return overlaps
 
-# Find top three elves with highest calories
-top_elves_df = elves.nlargest(3, columns= 'total_cals')
-top_elves = top_elves_df.index.to_list()
-
-# Find how many they are carrying
-max_cals = elves.loc[top_elves,]['total_cals'].sum()
-
-# The Answer
-print(f'{top_elves} are carrying the most calories totalling: {max_cals}')
+df['overlaps'] = add_overlaps(df, 'elf1_range', 'elf2_range')
