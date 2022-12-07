@@ -48,3 +48,33 @@ df['overlaps'] = add_overlaps(df, 'elf1_range', 'elf2_range')
 overall_sum = df['overlaps'].sum()
 
 print(f'All assignment paris that have one that fully contains the other: {overall_sum}')
+
+
+### Part Two
+
+# If they overlap at all
+def find_any_overlaps(list1, list2):
+
+    check1 = any(item in list1 for item in list2)
+
+    if check1 is True:
+        return 1
+    else:
+        return 0
+
+# Function to combine the overlaps together
+def add_any_overlaps(df, col1, col2):
+    overlaps = []
+
+    for i in df.index:
+        overlaps.append(find_any_overlaps(df[col1][i], df[col2][i]))
+
+    return overlaps
+
+# Create new overlaps column
+df['overlaps'] = add_any_overlaps(df, 'elf1_range', 'elf2_range')
+
+# get overall sum of overlaps
+overall_sum = df['overlaps'].sum()
+
+print(f'All assignment paris that have one that fully contains the other: {overall_sum}')
