@@ -1,37 +1,46 @@
 import pandas as pd
 
-# Import text file and iterate over gaps
-counter = 0
-input = dict()
+# Import text file and split string
 with open('input.txt') as f:
-    for group in f.read().split('\n\n'):
-        counter += 1
-        key = 'elf' + str(counter)
-        val = group.split('\n')
-        input[key] = ' '.join(val)
+    input =list(f.read())
 
-# Convert to Dataframe and Rename Calorie Column
-elves = pd.DataFrame.from_dict(input, orient = 'index', columns = ['cal_list'])
+# Function to check for duplicates
+def check_duplicates(list):
 
-# Convert String of Numbers into List of Integers and Sum it up
-total_cals = []
-for num_str in elves['cal_list']:
-    num_list = []
-    for number in num_str.split():
-        num_int = int(number)
-        num_list.append(num_int)
-    num_sum = sum(num_list)
-    total_cals.append(num_sum)
+    if len(list) == len(set(list)):
+        return False
+    else:
+        return True
 
-# Add total calories to df
-elves['total_cals'] = total_cals
+# Iterate thru rolling window for duplicates
+n = 4
+index = 0
+for i in input:
+    j = index
+    index += 1
 
-# Find top three elves with highest calories
-top_elves_df = elves.nlargest(3, columns= 'total_cals')
-top_elves = top_elves_df.index.to_list()
+    window = input[j:n]
+    print(window)
+    if check_duplicates(window) == False:
+       print(j + 4)
+       break
+    else:
+        n += 1
+        print('duplicates found')
+    
+### Part 2
 
-# Find how many they are carrying
-max_cals = elves.loc[top_elves,]['total_cals'].sum()
+n = 14
+index = 0
+for i in input:
+    j = index
+    index += 1
 
-# The Answer
-print(f'{top_elves} are carrying the most calories totalling: {max_cals}')
+    window = input[j:n]
+    print(window)
+    if check_duplicates(window) == False:
+       print(j + 14)
+       break
+    else:
+        n += 1
+        print('duplicates found')
